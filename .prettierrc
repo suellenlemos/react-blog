@@ -1,0 +1,27 @@
+{
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "printWidth": 80,
+  "embeddedLanguageFormatting": "auto",
+  "quoteProps": "consistent",
+  "jsxBracketSameLine": true,
+  "endOfLine": "lf",
+  "bracketSpacing": true,
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.css"],
+      "options": {
+        "parser": "babel-ts"
+      }
+    }
+  ],
+  "prettier/prettier": [
+    "error",
+    {
+      "endOfLine": "auto"
+    }
+  ]
+}
