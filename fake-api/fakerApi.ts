@@ -35,7 +35,7 @@ export default class FakerApi {
       instance._auth(username, password);
       return {
         success: true,
-        message: 'Usuario Logado',
+        message: 'Usuário Logado',
       };
     },
     '/logout': function (instance: FakerApi) {
@@ -53,7 +53,7 @@ export default class FakerApi {
 
       const users = instance._allUsers();
       if (users.filter((userMap) => userMap.username === username)[0])
-        throw 'Usuario já cadastrado';
+        throw 'Usuário já cadastrado';
 
       instance._setUser({ name, username, password });
       return {
