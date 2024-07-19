@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
+import { authService } from '../../../app/services/authService';
 
 interface FormData {
   username: string;
@@ -55,6 +56,13 @@ export const useRegisterController = () => {
     setConfirmedPassword(confirmedPassword);
   };
 
+  const resetFormFields = () => {
+    setName('');
+    setUsername('');
+    setPassword('');
+    setConfirmedPassword('');
+  };
+
   const disableSubmit =
     !name ||
     !username ||
@@ -66,15 +74,53 @@ export const useRegisterController = () => {
     hasConfirmedPasswordError ||
     isSubmitting;
 
+  const responseMessageMap = useMemo(() => {
+    return [
+      {
+        backendMessage: 'Dados inválidos',
+        parsedMessage: 'Full name, username and password fields must be sent',
+      },
+      {
+        backendMessage: 'Usuário já cadastrado',
+        parsedMessage: 'The username you entered is already in use',
+      },
+      {
+        backendMessage: 'Usuário cadastrado',
+        parsedMessage: 'User successfully registered!',
+      },
+    ];
+  }, []);
+
+  const parseResponseMessage = useCallback(
+    (attr: string) => {
+      let message = attr;
+      responseMessageMap.forEach((item) => {
+        message = message.replace(item.backendMessage, item.parsedMessage);
+      });
+      return message;
+    },
+    [responseMessageMap]
+  );
+
   const onSubmit: SubmitHandler<FormData> = useCallback(async () => {
-    const payload = {
-      name: name.trim(),
-      username: username.trim(),
-      password: password.trim(),
-    };
-    console.log('payload', payload);
-    toast.success('Usuário cadastrado com sucesso');
-  }, [username, password]);
+    setIsSubmitting(true);
+    try {
+      const params = {
+        name: name.trim(),
+        username: username.trim(),
+        password: password.trim(),
+      };
+
+      const result: any = await authService.register(params);
+      setIsSubmitting(false);
+      toast.success(parseResponseMessage(result.message));
+      resetFormFields();
+    } catch (error: any) {
+      setIsSubmitting(false);
+      const errorMessage = parseResponseMessage(error.message);
+      toast.error(errorMessage);
+    }
+  }, [name, username, password]);
 
   return {
     name,

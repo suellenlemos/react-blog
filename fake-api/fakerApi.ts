@@ -58,7 +58,7 @@ export default class FakerApi {
       instance._setUser({ name, username, password });
       return {
         success: true,
-        message: 'Usuario cadastrado',
+        message: 'Usuário cadastrado',
       };
     },
     '/me': function (instance: FakerApi) {
@@ -141,7 +141,7 @@ export default class FakerApi {
       instance._setComment(post_id, { content });
       return {
         success: true,
-        message: 'Comentario adicionado',
+        message: 'Comentarão adicionado',
       };
     },
     '/comments/update': function (
@@ -163,7 +163,7 @@ export default class FakerApi {
       instance._removeComment(post_id, comment_id);
       return {
         success: true,
-        message: 'Comentario removido',
+        message: 'Comentário removido',
       };
     },
   };
@@ -262,7 +262,7 @@ export default class FakerApi {
   }
   _isAuthenticate() {
     if (!this._getAuth()) {
-      throw 'Necessario autenticação';
+      throw 'Necessário autenticação';
     }
     return true;
   }
@@ -275,10 +275,10 @@ export default class FakerApi {
   _auth(username: string, password: string) {
     const user = this._getUserByUsername(username);
     if (!user) {
-      throw 'Usuario não encontrado';
+      throw 'Usuário não encontrado';
     }
     if (user.password !== password) {
-      throw 'Usuario ou senha divergentes';
+      throw 'Usuário ou senha divergentes';
     }
     this._setAuth(user);
     return true;
