@@ -12,6 +12,7 @@ interface FormData {
 
 export const Login = () => {
   const { handleSubmit } = useForm<FormData>();
+
   const {
     username,
     setUsername,
@@ -44,6 +45,7 @@ export const Login = () => {
 
           <Link
             to="/register"
+            aria-label="Sign up"
             className="tracking-[-0.5px] font-medium text-teal-900">
             Sign Up
           </Link>
@@ -57,6 +59,8 @@ export const Login = () => {
           <input
             id="username"
             placeholder=""
+            autoComplete="off"
+            aria-label="Username"
             value={username}
             onChange={(e) => {
               setUsername(e.target.value.toLowerCase().trim());
@@ -89,6 +93,8 @@ export const Login = () => {
             id="password"
             type="password"
             placeholder=""
+            autoComplete="off"
+            aria-label="Password"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value.trim());
@@ -119,6 +125,7 @@ export const Login = () => {
         <Button
           type="submit"
           className="mt-2"
+          aria-label="Log in"
           isLoading={isSubmitting}
           disabled={disableSubmit}>
           Log in

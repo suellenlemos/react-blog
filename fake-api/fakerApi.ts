@@ -10,27 +10,22 @@ import {
   IViewComment,
   IUpdateComment,
   IRemoveComment,
-} from './model';
+} from './entities';
 
-interface ISuccessResponse<T = any> {
-  success: true;
+export interface ApiResponse {
+  success: boolean;
   message?: string;
-  data?: T;
+  data?: any;
 }
 
-interface IFailureResponse {
-  success: false;
-  message: string;
-}
+type RouteResponse = ApiResponse;
 
-type RouteResponse<T = any> = ISuccessResponse<T> | IFailureResponse;
-
-interface RouteFunction<T = any> {
-  (instance: FakerApi, params?: T): RouteResponse;
+interface RouteFunction {
+  (instance: FakerApi, params?: any): RouteResponse;
 }
 
 export default class FakerApi {
-  routes: Record<string, RouteFunction<any>> = {
+  routes: Record<string, RouteFunction> = {
     '/login': function (instance: FakerApi, { username, password }: ILogin) {
       instance._auth(username, password);
       return {
@@ -183,12 +178,12 @@ export default class FakerApi {
       } catch (e) {
         return {
           success: false,
-          message: e,
+          message: String(e),
         };
       }
     };
   }
-  request(route: string, params: any) {
+  request(route: string, params: any): Promise<ApiResponse> {
     const routeFunction = this.getRoute(route);
     return new Promise(function (resolve, reject) {
       window.setTimeout(function () {
@@ -201,16 +196,16 @@ export default class FakerApi {
       }, Math.random() * 200 + 150);
     });
   }
-  get(route: string, params: any) {
+  get(route: string, params: any): Promise<ApiResponse> {
     return this.request(route, params);
   }
-  post(route: string, params: any) {
+  post(route: string, params: any): Promise<ApiResponse> {
     return this.request(route, params);
   }
-  put(route: string, params: any) {
+  put(route: string, params: any): Promise<ApiResponse> {
     return this.request(route, params);
   }
-  delete(route: string, params: any) {
+  delete(route: string, params: any): Promise<ApiResponse> {
     return this.request(route, params);
   }
 
@@ -256,7 +251,7 @@ export default class FakerApi {
     this._insertUsers(users);
   }
 
-  _getAuth() {
+  _getAuth(): IUser | null {
     const auth = window.localStorage.getItem('auth');
     return auth ? JSON.parse(auth) : null;
   }
@@ -321,12 +316,12 @@ export default class FakerApi {
     let posts = this._allPosts();
     if (!post.id) {
       post.id = this._getNextPostId();
-      post.user_id = auth.id;
+      post.user_id = auth?.id;
       posts.push(post);
       this._addNextPostId();
     } else {
       posts = posts.map((postMap) =>
-        postMap.id === post.id && postMap.user_id === auth.id ? post : postMap
+        postMap.id === post.id && postMap.user_id === auth?.id ? post : postMap
       );
     }
     this._insertPosts(posts);
@@ -335,7 +330,7 @@ export default class FakerApi {
     this._isAuthenticate();
     const auth = this._getAuth();
     const post = this._getPost(post_id);
-    if (post.user_id !== auth.id) return;
+    if (post.user_id !== auth?.id) return;
     const posts = this._allPosts().filter((postMap) => postMap.id !== post_id);
     this._insertPosts(posts);
   }
@@ -366,12 +361,12 @@ export default class FakerApi {
     const post = this._getPost(post_id);
     if (!comment.id) {
       comment.id = this._getNextCommentId();
-      comment.user_id = auth.id;
+      comment.user_id = auth?.id;
       post.comments?.push(comment);
       this._addNextCommentId();
     } else {
       post.comments = post.comments?.map((commentMap) =>
-        commentMap.id === comment.id && commentMap.user_id === auth.id
+        commentMap.id === comment.id && commentMap.user_id === auth?.id
           ? comment
           : commentMap
       );
@@ -389,7 +384,7 @@ export default class FakerApi {
     const auth = this._getAuth();
     const post = this._getPost(post_id);
     const comment = this._getComment(post_id, comment_id);
-    if (post.user_id !== auth.id || comment.user_id !== auth.id) return;
+    if (post.user_id !== auth?.id || comment.user_id !== auth?.id) return;
     post.comments = post.comments?.filter(
       (commentMap) => commentMap.id !== comment_id
     );

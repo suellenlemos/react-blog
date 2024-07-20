@@ -56,6 +56,7 @@ export const Register = () => {
 
           <Link
             to="/login"
+            aria-label="Log in"
             className="tracking-[-0.5px] font-medium text-teal-900">
             Log in
           </Link>
@@ -69,6 +70,8 @@ export const Register = () => {
           <input
             id="name"
             placeholder=""
+            autoComplete="off"
+            aria-label="Full name"
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -100,6 +103,8 @@ export const Register = () => {
           <input
             id="username"
             placeholder=""
+            autoComplete="off"
+            aria-label="Username"
             value={username}
             onChange={(e) => {
               setUsername(e.target.value.toLowerCase().trim());
@@ -132,6 +137,8 @@ export const Register = () => {
             id="password"
             type="password"
             placeholder=""
+            autoComplete="off"
+            aria-label="Password"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value.replace(/\s+/g, ''));
@@ -164,6 +171,8 @@ export const Register = () => {
             id="confirmedPassword"
             type="password"
             placeholder=""
+            autoComplete="off"
+            aria-label="Confirm password"
             value={confirmedPassword}
             onChange={(e) => {
               setConfirmedPassword(e.target.value.replace(/\s+/g, ''));
@@ -194,6 +203,7 @@ export const Register = () => {
         <Button
           type="submit"
           className="mt-2"
+          aria-label="Sign up"
           isLoading={isSubmitting}
           disabled={disableSubmit}>
           Sign up

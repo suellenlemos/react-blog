@@ -18,7 +18,8 @@
     "react-hook-form": "^7.52.1",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.25.1",
-    "tailwind-merge": "^2.4.0"
+    "tailwind-merge": "^2.4.0",
+    "use-local-storage": "^3.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

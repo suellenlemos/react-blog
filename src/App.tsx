@@ -1,12 +1,15 @@
 import { Toaster } from 'react-hot-toast';
 
 import { Router } from './Router';
+import { AuthProvider } from './app/contexts';
 
 export const App = () => {
   return (
     <>
-      <Toaster />
-      <Router />
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
     </>
   );
 };
