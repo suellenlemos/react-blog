@@ -1,8 +1,15 @@
-import { createContext, ReactNode, useCallback } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { localStorageKeys } from '../config/localStorageKeys';
 import { User } from '../entities';
 import useLocalStorage from 'use-local-storage';
 import { authService } from '../services';
+import { postList } from '../../view/pages/Home/components/Blog/posts';
 
 export interface LoginParams {
   username: string;
@@ -24,6 +31,7 @@ export interface AuthContextValue {
   login: (params: LoginParams) => Promise<any>;
   logout: () => Promise<void>;
   accessToken: string;
+  users: User[];
 }
 
 export const AuthContext = createContext({} as AuthContextValue);
@@ -33,6 +41,14 @@ export interface AuthContextProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthContextProviderProps) => {
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    localStorage.setItem('posts', JSON.stringify(postList));
+    const usersJSON = localStorage.getItem(localStorageKeys.USERS);
+    setUsers(usersJSON ? JSON.parse(usersJSON) : []);
+  }, []);
+
   const [user, setUser] = useLocalStorage<User | undefined>(
     localStorageKeys.USER,
     undefined
@@ -67,6 +83,7 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
     login,
     logout,
     accessToken,
+    users,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
