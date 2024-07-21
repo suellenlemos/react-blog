@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home, Login, NotFound, Register } from '../view/pages';
 
 import { AuthGuard } from './AuthGuard';
-import { AuthLayout } from '../view/layouts';
+import { AuthLayout, MainLayout } from '../view/layouts';
 
 export const Router = () => {
   return (
@@ -16,7 +16,9 @@ export const Router = () => {
         </Route>
 
         <Route element={<AuthGuard isPrivate />}>
-          <Route path="/" element={<Home />} />
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Home />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<NotFound />} />

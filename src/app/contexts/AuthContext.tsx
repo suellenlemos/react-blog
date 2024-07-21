@@ -22,6 +22,7 @@ interface UserInfo extends User {
 export interface AuthContextValue {
   user: User | undefined;
   login: (params: LoginParams) => Promise<any>;
+  logout: () => Promise<void>;
   accessToken: string;
 }
 
@@ -54,9 +55,17 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
     }
   }, []);
 
+  const logout = useCallback(async () => {
+    await authService.logout();
+    window.location.pathname = '/login';
+    localStorage.removeItem(localStorageKeys.ACCESS_TOKEN);
+    localStorage.removeItem(localStorageKeys.USER);
+  }, []);
+
   const value = {
     user,
     login,
+    logout,
     accessToken,
   };
 
