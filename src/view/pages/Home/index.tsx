@@ -9,16 +9,27 @@ import toast from 'react-hot-toast';
 export const Home = () => {
   const { user, users } = useAuth();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const { isLoadingPostList, hasPostListError, postList, fetchPostList } =
     useFetchPosts();
 
   const sortedPosts = postList ? postList.sort((a, b) => b.id - a.id) : [];
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const openEditDrawer = useCallback(() => {
+    setIsDrawerOpen(true);
+  }, []);
+
+  const onEditDrawerClose = useCallback(async () => {
+    setIsDrawerOpen(false);
+    await fetchPostList();
+  }, [fetchPostList]);
+
   const getUserNameById = (userId: number) => {
     const user = users.find((user) => user.id === userId);
-    return user ? user.name : 'Unknown User';
+    return user ? user.name : '';
   };
 
   const loggedInUserId = user?.id;
@@ -67,7 +78,7 @@ export const Home = () => {
     <div className="w-full h-full flex items-center justify-start flex-col">
       <div className="w-full">
         <div className="flex w-full items-center justify-start flex-col gap-10 pb-20 p-4">
-          <h1 className="text-teal-900 font-semibold text-center text-4xl">
+          <h1 className="text-teal-900 font-semibold text-center md:mb-10 lg:mb-10 text-4xl">
             BLOG POSTS
           </h1>
 
@@ -95,6 +106,9 @@ export const Home = () => {
                   isModalOpen={isModalOpen}
                   setIsModalOpen={setIsModalOpen}
                   onDelete={onDelete}
+                  isDrawerOpen={isDrawerOpen}
+                  openEditDrawer={openEditDrawer}
+                  onEditDrawerClose={onEditDrawerClose}
                 />
               ))}
             </div>

@@ -7,6 +7,7 @@ import {
   TooltipArrow,
 } from '@radix-ui/react-tooltip';
 import DeleteConfirmModal from '../DeleteConfirmModal';
+import { EditPostDrawer } from './EditPostDrawer';
 
 interface PostCardProps {
   post: PostProps;
@@ -15,6 +16,9 @@ interface PostCardProps {
   onDelete: (postId: number) => Promise<void>;
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isDrawerOpen: boolean;
+  onEditDrawerClose: () => void;
+  openEditDrawer: () => void;
 }
 
 export const PostCard = ({
@@ -24,21 +28,24 @@ export const PostCard = ({
   onDelete,
   isModalOpen,
   setIsModalOpen,
+  isDrawerOpen,
+  onEditDrawerClose,
+  openEditDrawer,
 }: PostCardProps) => {
   const isPostAuthor = post.user_id === loggedInUserId;
 
   const truncateContent = (text: string) => {
-    if (text.length > 300) {
-      return text.slice(0, 300) + '...';
+    if (text.length > 200) {
+      return text.slice(0, 200) + '...';
     }
     return text;
   };
 
   return (
-    <div className="w-full max-w-4xl h-60 md:h-52 lg:h-56 mx-auto p-4 bg-white border-b border-gray-300">
+    <div className="w-full max-w-4xl h-56 md:h-52 lg:h-52 mx-auto p-4 bg-white border-b border-gray-300">
       <p className="text-justify #6b6b6bd9 text-sm md:text-base">{userName}</p>
       <header className="mt-2 md:mt-3 text-gray-800 block text-lg md:text-2xl no-underline hover:text-teal-900 font-bold tracking-tight text-left">
-        {post.title}
+        {post.title} 
       </header>
       <p className="text-justify text-gray-600 text-sm md:text-base mt-2 mb-2">
         {truncateContent(post.content)}
@@ -56,7 +63,7 @@ export const PostCard = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  // onClick={handleEdit}
+                  onClick={openEditDrawer}
                   className="text-blue-500 hover:text-blue-700">
                   <FaEdit size="18px" />
                 </button>
@@ -85,6 +92,13 @@ export const PostCard = ({
                 Delete
               </TooltipContent>
             </Tooltip>
+
+            <EditPostDrawer
+              isOpen={isDrawerOpen}
+              onClose={onEditDrawerClose}
+              post={post}
+            />
+
             <DeleteConfirmModal
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}

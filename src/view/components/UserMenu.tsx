@@ -21,7 +21,7 @@ export const UserMenu = () => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
-        <div className="bg-teal-0 rounded-full w-12 h-12 flex items-center justify-center border border-teal-900">
+        <div className="bg-teal-0 rounded-full w-10 h-10 flex items-center justify-center border border-teal-900">
           <span className="text-sm tracking-[-0.5px] text-black font-medium">
             {getInitials(user?.name)}
           </span>
