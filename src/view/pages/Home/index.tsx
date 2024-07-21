@@ -1,12 +1,18 @@
+import { useCallback, useMemo, useState } from 'react';
 import { useAuth, useFetchPosts } from '../../../app/hooks';
 import { Spinner } from '../../components';
 import { PostCard } from './components/Blog/PostCard';
 import { FaExclamationTriangle } from 'react-icons/fa';
+import { postsService } from '../../../app/services';
+import toast from 'react-hot-toast';
 
 export const Home = () => {
-  const { users } = useAuth();
+  const { user, users } = useAuth();
 
-  const { isLoadingPostList, hasPostListError, postList } = useFetchPosts();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { isLoadingPostList, hasPostListError, postList, fetchPostList } =
+    useFetchPosts();
 
   const sortedPosts = postList ? postList.sort((a, b) => b.id - a.id) : [];
 
@@ -14,6 +20,48 @@ export const Home = () => {
     const user = users.find((user) => user.id === userId);
     return user ? user.name : 'Unknown User';
   };
+
+  const loggedInUserId = user?.id;
+
+  const errorMessageMap = useMemo(() => {
+    return [
+      {
+        backendErrorMessage: 'Post não encontrado',
+        parsedErrorMessage:
+          'Unable to process the request. No post with this id was found.',
+      },
+
+      {
+        backendErrorMessage: 'Você não tem permissão para deletar esse post',
+        parsedErrorMessage: 'You do not have permission to delete this post',
+      },
+    ];
+  }, []);
+
+  const parseErrorMessage = useCallback(
+    (attr: string) => {
+      let errorMessage = attr;
+      errorMessageMap.forEach((item) => {
+        errorMessage = errorMessage.replace(
+          item.backendErrorMessage,
+          item.parsedErrorMessage
+        );
+      });
+      return errorMessage;
+    },
+    [errorMessageMap]
+  );
+
+  const onDelete = useCallback(async (postId: number) => {
+    try {
+      await postsService.deletePost(postId);
+      setIsModalOpen(false);
+      await fetchPostList();
+    } catch (error: any) {
+      const errorMessage = parseErrorMessage(error.message);
+      toast.error(errorMessage);
+    }
+  }, []);
 
   return (
     <div className="w-full h-full flex items-center justify-start flex-col">
@@ -43,6 +91,10 @@ export const Home = () => {
                   key={post.id}
                   post={post}
                   userName={getUserNameById(post.user_id)}
+                  loggedInUserId={loggedInUserId}
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                  onDelete={onDelete}
                 />
               ))}
             </div>

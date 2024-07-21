@@ -330,7 +330,10 @@ export default class FakerApi {
     this._isAuthenticate();
     const auth = this._getAuth();
     const post = this._getPost(post_id);
-    if (post.user_id !== auth?.id) return;
+    if (post.user_id !== auth?.id) {
+      throw 'Você não tem permissão para deletar esse post';
+    }
+
     const posts = this._allPosts().filter((postMap) => postMap.id !== post_id);
     this._insertPosts(posts);
   }

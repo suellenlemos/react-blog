@@ -1,12 +1,32 @@
-import { FaComment } from 'react-icons/fa';
+import { FaComment, FaEdit, FaTrash } from 'react-icons/fa';
 import { PostProps } from '../../../../../app/entities';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipArrow,
+} from '@radix-ui/react-tooltip';
+import DeleteConfirmModal from '../DeleteConfirmModal';
 
 interface PostCardProps {
   post: PostProps;
   userName: string;
+  loggedInUserId?: number;
+  onDelete: (postId: number) => Promise<void>;
+  isModalOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const PostCard = ({ post, userName }: PostCardProps) => {
+export const PostCard = ({
+  post,
+  userName,
+  loggedInUserId,
+  onDelete,
+  isModalOpen,
+  setIsModalOpen,
+}: PostCardProps) => {
+  const isPostAuthor = post.user_id === loggedInUserId;
+
   const truncateContent = (text: string) => {
     if (text.length > 300) {
       return text.slice(0, 300) + '...';
@@ -24,12 +44,56 @@ export const PostCard = ({ post, userName }: PostCardProps) => {
         {truncateContent(post.content)}
       </p>
 
-      <button className="flex flex-row items-center justify-center gap-2">
-        <FaComment size="16px" color="#6b6b6bd9" />
-        <p className="text-justify #6b6b6bd9 text-sm md:text-base">
-          {post.comments?.length}
-        </p>
-      </button>
+      <div className="flex flex-row items-center justify-between gap-2">
+        <button className="flex flex-row items-center justify-center gap-2">
+          <FaComment size="16px" color="#6b6b6bd9" />
+          <p className="text-justify #6b6b6bd9 text-sm md:text-base">
+            {post.comments?.length}
+          </p>
+        </button>
+        {isPostAuthor && (
+          <div className="flex gap-3">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  // onClick={handleEdit}
+                  className="text-blue-500 hover:text-blue-700">
+                  <FaEdit size="18px" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                align="center"
+                className="bg-gray-700 text-white text-xs rounded py-1 px-2">
+                <TooltipArrow className="fill-current text-gray-700" />
+                Edit
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-red-500 hover:text-red-700">
+                  <FaTrash size="16px" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                align="center"
+                className="bg-gray-700 text-white text-xs rounded py-1 px-2">
+                <TooltipArrow className="fill-current text-gray-700" />
+                Delete
+              </TooltipContent>
+            </Tooltip>
+            <DeleteConfirmModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onDelete={onDelete}
+              post={post}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

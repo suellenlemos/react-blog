@@ -44,7 +44,11 @@ export const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    localStorage.setItem('posts', JSON.stringify(postList));
+    const postsJSON = localStorage.getItem('posts');
+    const posts = postsJSON ? JSON.parse(postsJSON) : [];
+    if (posts.length === 0) {
+      localStorage.setItem('posts', JSON.stringify(postList));
+    }
     const usersJSON = localStorage.getItem(localStorageKeys.USERS);
     setUsers(usersJSON ? JSON.parse(usersJSON) : []);
   }, []);

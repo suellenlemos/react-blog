@@ -2,14 +2,17 @@ import { Toaster } from 'react-hot-toast';
 
 import { Router } from './Router';
 import { AuthProvider } from './app/contexts';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 export const App = () => {
   return (
     <>
-      <AuthProvider>
-        <Router />
-        <Toaster />
-      </AuthProvider>
+      <TooltipProvider>
+        <AuthProvider>
+          <Router />
+          <Toaster />
+        </AuthProvider>
+      </TooltipProvider>
     </>
   );
 };
