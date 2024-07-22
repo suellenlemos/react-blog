@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { PostProps } from '../../../app/entities';
 import { EditPostDrawer } from './components/Blog/EditPostDrawer';
 import { DeleteConfirmModal } from './components/Blog/DeleteConfirmModal';
+import { CommentsDrawer } from './components/Blog/CommentsDrawer';
 
 export const Home = () => {
   const { user, users } = useAuth();
@@ -22,6 +23,10 @@ export const Home = () => {
   );
 
   const [post, setPost] = useState<PostProps | undefined>(undefined);
+
+  const [postComments, setPostComments] = useState<PostProps | undefined>(
+    undefined
+  );
 
   const openDeleteModal = useCallback((selectedPost: PostProps) => {
     setPostToDelete(selectedPost);
@@ -41,9 +46,18 @@ export const Home = () => {
     await fetchPostList();
   }, [fetchPostList]);
 
+  const openCommentsDrawer = useCallback((selectedPost: PostProps) => {
+    setPostComments(selectedPost);
+  }, []);
+
+  const onCommentsDrawerClose = useCallback(async () => {
+    setPostComments(undefined);
+    await fetchPostList();
+  }, [fetchPostList]);
+
   const getUserNameById = (userId: number) => {
-    const user = users.find((user) => user.id === userId);
-    return user ? user.name : '';
+    const userName = users.find((user) => user.id === userId);
+    return userName ? userName.name : '';
   };
 
   const loggedInUserId = user?.id;
@@ -119,6 +133,14 @@ export const Home = () => {
             />
           )}
 
+          {postComments && (
+            <CommentsDrawer
+              onClose={onCommentsDrawerClose}
+              loggedInUserId={loggedInUserId}
+              post={postComments}
+            />
+          )}
+
           {!hasPostListError && !isLoadingPostList && (
             <div className="flex flex-col w-full gap-3">
               {sortedPosts.map((post) => (
@@ -129,7 +151,7 @@ export const Home = () => {
                   loggedInUserId={loggedInUserId}
                   openDeleteModal={openDeleteModal}
                   openEditDrawer={openEditDrawer}
-                  onEditDrawerClose={onEditDrawerClose}
+                  openCommentsDrawer={openCommentsDrawer}
                 />
               ))}
             </div>

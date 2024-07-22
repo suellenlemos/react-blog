@@ -12,8 +12,8 @@ interface PostCardProps {
   userName: string;
   loggedInUserId?: number;
   openDeleteModal: (selectedPost: PostProps) => void;
-  onEditDrawerClose: () => void;
   openEditDrawer: (selectedPost: PostProps) => void;
+  openCommentsDrawer: (selectedPost: PostProps) => void;
 }
 
 export const PostCard = ({
@@ -22,6 +22,7 @@ export const PostCard = ({
   loggedInUserId,
   openDeleteModal,
   openEditDrawer,
+  openCommentsDrawer
 }: PostCardProps) => {
   const isPostAuthor = post.user_id === loggedInUserId;
 
@@ -43,7 +44,11 @@ export const PostCard = ({
       </p>
 
       <div className="flex flex-row items-center justify-between gap-2">
-        <button className="flex flex-row items-center justify-center gap-2">
+        <button
+          onClick={() => {
+            openCommentsDrawer(post);
+          }}
+          className="flex flex-row items-center justify-center gap-2">
           <FaComment size="16px" color="#6b6b6bd9" />
           <p className="text-justify #6b6b6bd9 text-sm md:text-base">
             {post.comments?.length}

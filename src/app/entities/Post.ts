@@ -1,5 +1,5 @@
 export interface CommentProps {
-  id?: number;
+  id: number;
   user_id: number;
   content: string;
 }
@@ -9,5 +9,5 @@ export interface PostProps {
   user_id: number;
   title: string;
   content: string;
-  comments?: CommentProps[];
+  comments: CommentProps[];
 }
