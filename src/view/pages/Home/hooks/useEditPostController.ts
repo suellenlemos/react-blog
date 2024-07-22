@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { postsService } from '../../../../../app/services';
-import { PostProps } from '../../../../../app/entities';
+import { postsService } from '../../../../app/services';
+import { PostProps } from '../../../../app/entities';
 
 interface FormData {
   post_id: number;
@@ -12,7 +12,7 @@ interface FormData {
   };
 }
 
-export const usePostController = (post: PostProps, onClose: () => void) => {
+export const useEditPostController = (post: PostProps, onClose: () => void) => {
   const [newTitle, setNewTitle] = useState<string>(post.title);
 
   const [newContent, setNewContent] = useState<string>(post.content);

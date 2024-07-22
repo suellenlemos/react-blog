@@ -5,6 +5,9 @@ import { PostCard } from './components/Blog/PostCard';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import { postsService } from '../../../app/services';
 import toast from 'react-hot-toast';
+import { PostProps } from '../../../app/entities';
+import { EditPostDrawer } from './components/Blog/EditPostDrawer';
+import { DeleteConfirmModal } from './components/Blog/DeleteConfirmModal';
 
 export const Home = () => {
   const { user, users } = useAuth();
@@ -14,16 +17,27 @@ export const Home = () => {
 
   const sortedPosts = postList ? postList.sort((a, b) => b.id - a.id) : [];
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<PostProps | undefined>(
+    undefined
+  );
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [post, setPost] = useState<PostProps | undefined>(undefined);
 
-  const openEditDrawer = useCallback(() => {
-    setIsDrawerOpen(true);
+  const openDeleteModal = useCallback((selectedPost: PostProps) => {
+    setPostToDelete(selectedPost);
+  }, []);
+
+  const onDeleteModalClose = useCallback(async () => {
+    setPostToDelete(undefined);
+    await fetchPostList();
+  }, [fetchPostList]);
+
+  const openEditDrawer = useCallback((selectedPost: PostProps) => {
+    setPost(selectedPost);
   }, []);
 
   const onEditDrawerClose = useCallback(async () => {
-    setIsDrawerOpen(false);
+    setPost(undefined);
     await fetchPostList();
   }, [fetchPostList]);
 
@@ -66,7 +80,7 @@ export const Home = () => {
   const onDelete = useCallback(async (postId: number) => {
     try {
       await postsService.deletePost(postId);
-      setIsModalOpen(false);
+      setPostToDelete(undefined);
       await fetchPostList();
     } catch (error: any) {
       const errorMessage = parseErrorMessage(error.message);
@@ -95,6 +109,16 @@ export const Home = () => {
           )}
           {isLoadingPostList && <Spinner className="h-24 w-24 mt-48" />}
 
+          {post && <EditPostDrawer onClose={onEditDrawerClose} post={post} />}
+
+          {postToDelete && (
+            <DeleteConfirmModal
+              onClose={onDeleteModalClose}
+              onDelete={onDelete}
+              post={postToDelete}
+            />
+          )}
+
           {!hasPostListError && !isLoadingPostList && (
             <div className="flex flex-col w-full gap-3">
               {sortedPosts.map((post) => (
@@ -103,10 +127,7 @@ export const Home = () => {
                   post={post}
                   userName={getUserNameById(post.user_id)}
                   loggedInUserId={loggedInUserId}
-                  isModalOpen={isModalOpen}
-                  setIsModalOpen={setIsModalOpen}
-                  onDelete={onDelete}
-                  isDrawerOpen={isDrawerOpen}
+                  openDeleteModal={openDeleteModal}
                   openEditDrawer={openEditDrawer}
                   onEditDrawerClose={onEditDrawerClose}
                 />
