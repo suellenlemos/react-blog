@@ -35,7 +35,7 @@ export const EditPostDrawer = ({ onClose, post }: EditPostDrawerProps) => {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/30" />
         <Dialog.Content
-          className="fixed top-0 right-0 w-full md:w-[32rem] h-full bg-white shadow-lg p-6"
+          className="fixed top-0 right-0 w-full md:w-[32rem] h-full bg-white shadow-lg p-6 overflow-y-auto"
           aria-describedby={undefined}>
           <Dialog.Title className="text-xl font-semibold mb-4">
             Edit Post
